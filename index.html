@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Kadence → Hastighed (cykel)</title>
+  <meta name="description" content="Lille utility-tool: beregn cykelhastighed ud fra kadence, gearing og hjul/dæk." />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="wrap">
+    <div class="top">
+      <div>
+        <h1>Kadence → Hastighed</h1>
+        <p class="muted">Beregn km/t og tempo ud fra kadence, gearing og hjul/dæk. Kører direkte i browseren.</p>
+      </div>
+      <a class="cta" href="https://bikeland.dk" target="_blank" rel="noopener">
+        Guides på Bikeland.dk →
+      </a>
+    </div>
+  </header>
+
+  <main class="wrap grid">
+    <section class="card">
+      <h2>Input</h2>
+
+      <div class="form-grid">
+        <label>
+          <span>Klinge (tænder)</span>
+          <input id="chainring" type="number" min="1" step="1" value="50" />
+        </label>
+
+        <label>
+          <span>Tandhjul (tænder)</span>
+          <input id="cog" type="number" min="1" step="1" value="17" />
+        </label>
+
+        <label>
+          <span>Kadence (rpm)</span>
+          <input id="cadence" type="number" min="1" step="1" value="90" />
+        </label>
+
+        <label>
+          <span>Hjul preset</span>
+          <select id="wheelPreset">
+            <option value="700c-25" selected>700C x 25 (landevej)</option>
+            <option value="700c-28">700C x 28</option>
+            <option value="700c-32">700C x 32</option>
+            <option value="700c-35">700C x 35 (gravel)</option>
+            <option value="650b-47">650B x 47</option>
+            <option value="29-2.25">29" x 2.25 (MTB)</option>
+            <option value="27.5-2.35">27.5" x 2.35 (MTB)</option>
+            <option value="custom">Custom</option>
+          </select>
+        </label>
+
+        <label>
+          <span>ISO / BSD (mm)</span>
+          <input id="bsdMm" type="number" min="200" step="1" value="622" />
+          <small class="muted">700C = 622, 650B = 584.</small>
+        </label>
+
+        <label>
+          <span>Dækbredde (mm)</span>
+          <input id="tireMm" type="number" min="10" step="1" value="25" />
+          <small class="muted">Estimat: diameter = BSD + 2×dæk.</small>
+        </label>
+
+        <label class="span-2">
+          <span>Tabel (rpm interval)</span>
+          <div class="row2">
+            <input id="rpmFrom" type="number" min="1" step="1" value="60" />
+            <input id="rpmTo" type="number" min="1" step="1" value="120" />
+            <input id="rpmStep" type="number" min="1" step="1" value="5" />
+          </div>
+          <small class="muted">Fra / til / step (rpm). Bruges til at lave en tabel du kan eksportere.</small>
+        </label>
+      </div>
+
+      <div class="actions">
+        <button id="btnCalc" class="primary">Beregn</button>
+        <button id="btnCSV" class="ghost">Eksportér tabel (CSV)</button>
+      </div>
+
+      <div id="status" class="status" aria-live="polite"></div>
+
+      <details class="help">
+        <summary>Hvordan regnes der?</summary>
+        <ul>
+          <li><strong>Ratio</strong> = klinge / tandhjul</li>
+          <li><strong>Hjuldiameter</strong> ≈ BSD + 2×dækbredde</li>
+          <li><strong>Omkreds</strong> = π × diameter</li>
+          <li><strong>Udvikling</strong> = omkreds × ratio</li>
+          <li><strong>Km/t</strong> = udvikling × rpm × 60 / 1000</li>
+          <li><strong>Tempo</strong> (min/km) = 60 / (km/t)</li>
+        </ul>
+      </details>
+    </section>
+
+    <section class="card">
+      <div class="row">
+        <h2>Resultat</h2>
+        <div class="pill" id="summaryPill">—</div>
+      </div>
+
+      <div class="result-grid">
+        <div class="metric">
+          <div class="k">Hastighed</div>
+          <div class="v" id="speedKmh">—</div>
+          <div class="s muted">km/t</div>
+        </div>
+
+        <div class="metric">
+          <div class="k">Tempo</div>
+          <div class="v" id="paceMinKm">—</div>
+          <div class="s muted">min/km</div>
+        </div>
+
+        <div class="metric">
+          <div class="k">Tempo</div>
+          <div class="v" id="paceMinMile">—</div>
+          <div class="s muted">min/mil</div>
+        </div>
+
+        <div class="metric">
+          <div class="k">Udvikling</div>
+          <div class="v" id="devM">—</div>
+          <div class="s muted">m/omdr.</div>
+        </div>
+      </div>
+
+      <h3 class="h3">Tabel (rpm → km/t)</h3>
+      <div class="table-wrap">
+        <table id="table">
+          <thead>
+            <tr>
+              <th>RPM</th>
+              <th>Km/t</th>
+              <th>Min/km</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="3" class="muted center">Klik “Beregn”</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="foot muted">
+        Online version og flere cykelværktøjer: <a href="https://bikeland.dk" target="_blank" rel="noopener">bikeland.dk</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap footer muted">
+    <span>Ingen tracking. Ingen dependencies.</span>
+    <span>Vedligeholdt af <a href="https://bikeland.dk" target="_blank" rel="noopener">bikeland.dk</a></span>
+  </footer>
+
+  <script src="./app.js"></script>
+</body>
+</html>
