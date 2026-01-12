@@ -6,7 +6,7 @@ Dette repository er et lille utility-værktøj, der beregner cykelhastighed og t
 
 ## Live demo
 
-👉 https://kbaastru.github.io/cadence-speed-tool/
+👉 https://kbaastrup.github.io/cadence-speed-tool/
 
 ---
 
